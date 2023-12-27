@@ -283,8 +283,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         if msg == 200:
             show = self.image
         else:
-            if self.number % 2 == 0:
-                if len(msg) == 1:
+            if len(msg) == 1:
                     cv2.rectangle(show, (int(msg[0][0]), int(msg[0][1])), (int(msg[0][2]), int(msg[0][3])), (0, 0, 255),3)
                     text = '{} targets in the picture'.format(1)  ##编辑文本
                     fontScale = 2 # 字体缩放比例
@@ -298,66 +297,24 @@ class Ui_MainWindow(QtWidgets.QWidget):
                     fontScale = 2  # 字体缩放比例
                     color = (255, 0, 0)  # 字体颜色
                     pos = (700, 100)  # 位置
-                    cv2.putText(show, text2, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-                else:
-                    for i in range(len(msg)):
-                        cv2.rectangle(show, (int(msg[i][0]), int(msg[i][1])), (int(msg[i][2]), int(msg[i][3])),(0, 0, 255), 3)
-                        text = '{} targets in the picture'.format(len(msg))  ##编辑文本
-                        fontScale = 2  # 字体缩放比例
-                        color = (0, 0, 255)  # 字体颜色
-                        pos = (700, 40)  # 位置
-                        cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-
-
-                    if int(self.arg) < len(msg):
-                        text = 'warning break-in!'.format(len(msg))  ##编辑文本
-                    else:
-                        text = 'leaving!'.format(len(msg))
-                    fontScale = 2  # 字体缩放比例
-                    color = (255, 0, 0)  # 字体颜色
-                    pos = (700, 100)  # 位置
-                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-
+                    cv2.putText(show, text2, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)                    
             else:
-                if len(msg) == 1:
-                    cv2.rectangle(show, (int(msg[0][0]), int(msg[0][1])), (int(msg[0][2]), int(msg[0][3])), (0, 0, 255),3)
-                    text = '{} targets in the picture'.format(1)  ##编辑文本
-                    fontScale = 2 # 字体缩放比例
+                for i in range(len(msg)):
+                    cv2.rectangle(show, (int(msg[i][0]), int(msg[i][1])), (int(msg[i][2]), int(msg[i][3])),(0, 0, 255), 3)
+                    text = '{} targets in the picture'.format(len(msg))  ##编辑文本
+                    fontScale = 2  # 字体缩放比例
                     color = (0, 0, 255)  # 字体颜色
                     pos = (700, 40)  # 位置
-                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-                    if int(self.arg) < 1:
-                        text2 = 'warning break-in!'  ##编辑文本
-                    else:
-                        text2 = 'leaving!'
-                    fontScale = 2  # 字体缩放比例
-                    color = (255, 0, 0)  # 字体颜色
-                    pos = (700, 100)  # 位置
-                    cv2.putText(show, text2, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-
+                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)        
+                        
+                if int(self.arg) < len(msg):
+                    text = 'warning break-in!'.format(len(msg))  ##编辑文本
                 else:
-                    for i in range(len(msg)):
-                        cv2.rectangle(show, (int(msg[i][0]), int(msg[i][1])), (int(msg[i][2]), int(msg[i][3])),(0, 0, 255), 3)
-                        text = '{} targets in the picture'.format(len(msg))  ##编辑文本
-                        fontScale = 2  # 字体缩放比例
-                        color = (0, 0, 255)  # 字体颜色
-                        pos = (700, 40)  # 位置
-                        cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-                    if int(self.arg) < len(msg):
-                        text = 'warning break-in!'  ##编辑文本
-                    else:
-                        text = 'leaving!'
-                    fontScale = 2  # 字体缩放比例
-                    color = (255, 0, 0)  # 字体颜色
-                    pos = (700, 100)  # 位置
-                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-
-
+                    text = 'leaving!'.format(len(msg))
+                fontScale = 2  # 字体缩放比例
+                color = (255, 0, 0)  # 字体颜色
+                pos = (700, 100)  # 位置
+                cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
 
         show = cv2.cvtColor(show, cv2.COLOR_BGR2RGB)
         # print(show.shape[1], show.shape[0])
