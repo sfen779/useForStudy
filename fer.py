@@ -17,7 +17,7 @@ import fastdeploy as fd
 import argparse
 #import paddle.inference as paddle_infer
 #from log import logger
-
+import onnxruntime as ort
 
 def normalize(nparray, order=2, axis=-1):
     """Normalize a N-D numpy array along the specified axis."""
@@ -63,14 +63,10 @@ def parse_arguments():
     parser.add_argument("--param", default=0 ,type=str, help="A parameter for the Qt application")
     return parser.parse_args()
 
-
-
-class mps_card_lahen_segment:
-
+class mps_fer(object):
     __tag = -1
-
-    def __init__(self, tag):
-
+    def __init(self,tag):
+        
         self.__tag = tag
         # model_file = "people_det.onnx"
         model_file = "posterV2_7cls.onnx"
@@ -79,8 +75,8 @@ class mps_card_lahen_segment:
         runtime_option = fd.RuntimeOption()
         # imported fastdeploy as fd
         runtime_option.use_ort_backend()
-        runtime_option.use_gpu()
-        self.model = fd.vision.detection.YOLOv5(
+        # runtime_option.use_gpu()
+        self.model = fd.vision.facedet.SCRFD(
             model_file, runtime_option=runtime_option
         )
         self.save_dir = 'images'
@@ -92,21 +88,55 @@ class mps_card_lahen_segment:
         # print('in mps_sample_by_image')
         # print(self.__tag)
         #################### write your function here ####################
-        img = cv2.imread(image)
+        img = cv2.imread("test.jpg")
         result = self.model.predict(img, conf_threshold=0.5, nms_iou_threshold=0.5)
 
         if result.boxes == []:
             msg = 200
         else:
-            box = []
-            for n, i in enumerate(result.label_ids):
-                if i == 0:
-                    box.append(result.boxes[n])
-            msg = box
+            print(result.boxes)
+            msg = result.boxes
         return msg
-#mps是干什么用的？--new一个刚刚定义的类，mps_card_lahen_segment
+
+class mps_facedetector(object):
+
+    __tag = -1
+
+    def __init__(self, tag):
+
+        self.__tag = tag
+        # model_file = "people_det.onnx"
+        model_file = "scrfd_10g_bnkps_shape640x640.onnx"
+        # params_file = "inference_model/model.pdiparams"
+        # config_file = "inference_model/model.yaml"
+        runtime_option = fd.RuntimeOption()
+        # imported fastdeploy as fd
+        runtime_option.use_ort_backend()
+        runtime_option.use_gpu()
+        self.model = fd.vision.facedet.SCRFD(
+            model_file, runtime_option=runtime_option
+        )
+        self.save_dir = 'images'
+        if not os.path.exists(self.save_dir):
+            os.makedirs(self.save_dir)
+
+    def classify_by_image(self, image):
+
+        # print('in mps_sample_by_image')
+        # print(self.__tag)
+        #################### write your function here ####################
+        img = cv2.imread("test.jpg")
+        result = self.model.predict(img, conf_threshold=0.5, nms_iou_threshold=0.5)
+
+        if result.boxes == []:
+            msg = 200
+        else:
+            print(result.boxes)
+            msg = result.boxes
+        return msg
+#mps是干什么用的？--new一个刚刚定义的类，mps_face_detector
 #mps代表公司名-micro pattern software
-mps = mps_card_lahen_segment(-1)
+mps = mps_facedetector(-1)
 
 
 

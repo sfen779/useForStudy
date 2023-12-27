@@ -279,6 +279,11 @@ class Ui_MainWindow(QtWidgets.QWidget):
 
         path = 'test.jpg'
         msg = mps.classify_by_image(path)
+        print("#########################\n")
+        print("msg:")
+        print(msg)
+        print("\n")
+        print("#########################\n")
 
         if msg == 200:
             show = self.image
