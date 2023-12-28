@@ -15,7 +15,7 @@ from PIL import Image
 import threading
 import onnxruntime as ort
 import fastdeploy as fd
-
+emo_dict_cn = {0: '无表情', 1: '开心', 2: '悲伤', 3: '惊讶', 4: '恐惧', 5: '厌恶', 6: '愤怒'}
 emo_dict = {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise', 4: 'fear', 5: 'disgust', 6: 'angry'}
 
 def normalize(nparray, order=2, axis=-1):
@@ -95,7 +95,7 @@ class mps_facedetector(object):
         if result.boxes == []:
             msg = 200
         else:
-            print(result.boxes)
+            # print(result.boxes)
             msg = result.boxes
         return msg
 #mps是干什么用的？--new一个刚刚定义的类，mps_face_detector
@@ -324,7 +324,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
                     color = (0, 0, 255)  # 字体颜色
                     pos = (int(msg[i][0]), int(msg[i][1])+50)  # 位置
                     cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-                    cv2.imwrite('final_result.jpg', roi)        
+                    cv2.imwrite('final_result{i}.jpg', roi)        
                         
 
         # cpu_thread.join()
