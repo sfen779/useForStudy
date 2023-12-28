@@ -18,12 +18,12 @@ class mps_fer():
         self.model = onnx.load(self.model_path)
         self.model = onnx.checker.check_model(self.model)
         self.ort_session = onnxruntime.InferenceSession(self.model_path,providers = ["CPUExecutionProvider"])
-        self.test_transform = transforms.Compose([transforms.Resize((224, 224)),transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225]),])
+        self.test_transform = transforms.Compose([transforms.Resize((224, 224)),transforms.ToTensor(),transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])])
     def predict(self, img_pil):
         input_img = self.test_transform(img_pil)
         input_tensor = input_img.unsqueeze(0).numpy()
-        ort_inputs = {'input':input_tensor}
-        ort_outputs = self.ort_session.run(['output'],ort_inputs)
+        ort_inputs = {'x.1':input_tensor}
+        ort_outputs = self.ort_session.run(['1753'],ort_inputs)
         return ort_outputs
 
 

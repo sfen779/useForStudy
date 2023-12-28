@@ -16,8 +16,7 @@ import threading
 import onnxruntime as ort
 import fastdeploy as fd
 
-emo_dict = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy',
-            4: 'sad', 5: 'surprise', 6: 'neutral'}
+emo_dict = {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise', 4: 'fear', 5: 'disgust', 6: 'angry'}
 
 def normalize(nparray, order=2, axis=-1):
     """Normalize a N-D numpy array along the specified axis."""
@@ -103,7 +102,7 @@ class mps_facedetector(object):
 #mps代表公司名-micro pattern software
     
 mps = mps_facedetector(-1)
-fer = mps_fer("posterV2_7cls-bs100.onnx")
+fer = mps_fer("posterV2_7cls.onnx")
 # det_thread = threading.Thread(target=mps_facedetector, args=(-1,))
 # fer_thread = threading.Thread(target=mps_fer, args=("posterV2_7cls.onnx",))
 # det_thread.start()
@@ -160,27 +159,27 @@ class Ui_MainWindow(QtWidgets.QWidget):
         for i in range(1):
             button_color[i].setFont(fontx)
             button_color[i].setStyleSheet("QPushButton{color:black}"
-                                          "QPushButton:hover{color:red}"
-                                          "QPushButton{background-color:rgb(78,255,255)}"
-                                          "QPushButton{border:2px}"
-                                          "QPushButton{border-radius:10px}"
-                                          "QPushButton{padding:2px 4px}")
+                                            "QPushButton:hover{color:red}"
+                                            "QPushButton{background-color:rgb(78,255,255)}"
+                                            "QPushButton{border:2px}"
+                                            "QPushButton{border-radius:10px}"
+                                            "QPushButton{padding:2px 4px}")
 
         self.button_open_camera.setMinimumHeight(50)
-       # self.button_cap.setMinimumHeight(50)
+        # self.button_cap.setMinimumHeight(50)
         # self.canshu.setMinimumHeight(50)
 #        self.det.setMinimumHeight(50)
 
         # move()方法移动窗口在屏幕上的位置到x = 300，y = 300坐标。
-        self.move(500, 500)
+        self.move(0, 0)
 
         # 信息显示
         self.label_show_camera = QtWidgets.QLabel()
         self.label_move = QtWidgets.QLabel()
         self.label_move.setFixedSize(100, 100)
 
-        self.label_show_camera.setFixedSize(1921, 1081)
-        # self.label_show_camera.setFixedSize(1300, 481)
+        #self.label_show_camera.setFixedSize(1921, 1081)
+        self.label_show_camera.setFixedSize(1600, 900)
         self.label_show_camera.setAutoFillBackground(False)
 
         self.__layout_fun_button.addWidget(self.button_open_camera)
@@ -296,17 +295,18 @@ class Ui_MainWindow(QtWidgets.QWidget):
                     cv2.imwrite('face.jpg', roi)
                     # text = "face"
                     result = mps_fer.predict(fer, Image.open("face.jpg"))[0][0]
-                    print(result)
+                    # print(result)
                     result2 = np.argmax(np.abs(result))
-                    print(result2)
+                    # print(result2)
                     text = emo_dict[result2]
-                    print(text)
+                    # print(text)
                     # gpu_thread = threading.Thread(target=mps_fer.predict, args=(fer, Image.open("test.jpg"),))
                     # gpu_thread.start()
                     fontScale = 2 # 字体缩放比例
                     color = (0, 0, 255)  # 字体颜色
-                    pos = (int(msg[0][0]), int(msg[0][1]))  # 位置
+                    pos = (int(msg[0][0]), int(msg[0][1])+50)  # 位置
                     cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
+                    cv2.imwrite('final_result.jpg', roi) 
                 
             else:
                 for i in range(len(msg)):
@@ -317,13 +317,14 @@ class Ui_MainWindow(QtWidgets.QWidget):
                     result = mps_fer.predict(fer, Image.open("face.jpg"))[0][0]
                     # print(result)
                     result2 = np.argmax(np.abs(result))
-                    print(result2)
+                    # print(result2)
                     text = emo_dict[result2]
-                    print(text)
+                    # print(text)
                     fontScale = 2  # 字体缩放比例
                     color = (0, 0, 255)  # 字体颜色
-                    pos = (msg[i][0], msg[i][1])  # 位置
-                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)        
+                    pos = (int(msg[i][0]), int(msg[i][1])+50)  # 位置
+                    cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
+                    cv2.imwrite('final_result.jpg', roi)        
                         
 
         # cpu_thread.join()
