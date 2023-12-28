@@ -1,7 +1,7 @@
 import shutil
 import warnings
 from sklearn import metrics
-from sklearn.metrics import confusion_matrix, plot_confusion_matrix
+from sklearn.metrics import confusion_matrix
 warnings.filterwarnings("ignore")
 import torch.utils.data as data
 import os
@@ -18,7 +18,6 @@ import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 import numpy as np
 import datetime
-from torchsampler import ImbalancedDatasetSampler
 from models.PosterV2_7cls import *
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -437,8 +436,6 @@ class RecorderMeter1(object):
         plt.gca().yaxis.set_ticks_position('none')
         plt.grid(True, which='minor', linestyle='-')
         plt.gcf().subplots_adjust(bottom=0.15)
-
-        plot_confusion_matrix(cm_normalized, title='Normalized confusion matrix')
         # show confusion matrix
         plt.savefig('./log/confusion_matrix.png', format='png')
         # fig.savefig(save_path, dpi=dpi, bbox_inches='tight')

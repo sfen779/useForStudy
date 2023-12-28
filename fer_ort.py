@@ -7,15 +7,17 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import QPalette, QBrush, QPixmap, QPainter, QBrush, QColor, QPen
-#　from export import mps_fer
+from export import mps_fer
 import os
 import time
-import fastdeploy as fd
 import argparse
 from PIL import Image
 import threading
 import onnxruntime as ort
+import fastdeploy as fd
 
+emo_dict = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy',
+            4: 'sad', 5: 'surprise', 6: 'neutral'}
 
 def normalize(nparray, order=2, axis=-1):
     """Normalize a N-D numpy array along the specified axis."""
@@ -61,7 +63,6 @@ def parse_arguments():
     parser.add_argument("--param", default=0 ,type=str, help="A parameter for the Qt application")
     return parser.parse_args()
 
-
 class mps_facedetector(object):
 
     __tag = -1
@@ -102,8 +103,7 @@ class mps_facedetector(object):
 #mps代表公司名-micro pattern software
     
 mps = mps_facedetector(-1)
-
-# fer = mps_fer("posterV2_7cls.onnx")
+fer = mps_fer("posterV2_7cls-bs100.onnx")
 # det_thread = threading.Thread(target=mps_facedetector, args=(-1,))
 # fer_thread = threading.Thread(target=mps_fer, args=("posterV2_7cls.onnx",))
 # det_thread.start()
@@ -294,41 +294,37 @@ class Ui_MainWindow(QtWidgets.QWidget):
                     cv2.rectangle(show, (int(msg[0][0]), int(msg[0][1])), (int(msg[0][2]), int(msg[0][3])), (0, 0, 255),3)
                     roi = show[int(msg[0][1]):int(msg[0][3]), int(msg[0][0]):int(msg[0][2])]
                     cv2.imwrite('face.jpg', roi)
-                    text = "face"
-                    #text = mps_fer.predict(fer, Image.open("test.jpg"))
+                    # text = "face"
+                    result = mps_fer.predict(fer, Image.open("face.jpg"))[0][0]
+                    print(result)
+                    result2 = np.argmax(np.abs(result))
+                    print(result2)
+                    text = emo_dict[result2]
+                    print(text)
                     # gpu_thread = threading.Thread(target=mps_fer.predict, args=(fer, Image.open("test.jpg"),))
                     # gpu_thread.start()
                     fontScale = 2 # 字体缩放比例
                     color = (0, 0, 255)  # 字体颜色
-                    pos = (700, 40)  # 位置
+                    pos = (int(msg[0][0]), int(msg[0][1]))  # 位置
                     cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
-                    if int(self.arg) < 1:
-                        text2 = 'warning break-in!'  ##编辑文本
-                    else:
-                        text2 = 'leaving!'  ##编辑文本
-                    fontScale = 2  # 字体缩放比例
-                    color = (255, 0, 0)  # 字体颜色
-                    pos = (700, 100)  # 位置
-                    cv2.putText(show, text2, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)                    
+                
             else:
                 for i in range(len(msg)):
                     cv2.rectangle(show, (int(msg[i][0]), int(msg[i][1])), (int(msg[i][2]), int(msg[i][3])),(0, 0, 255), 3)
                     roi = show[int(msg[i][1]):int(msg[i][3]), int(msg[i][0]):int(msg[i][2])]
-                    cv2.imwrite('face{}.jpg'.format(i), roi)
-                    text = "face"
+                    cv2.imwrite('face.jpg', roi)
+
+                    result = mps_fer.predict(fer, Image.open("face.jpg"))[0][0]
+                    # print(result)
+                    result2 = np.argmax(np.abs(result))
+                    print(result2)
+                    text = emo_dict[result2]
+                    print(text)
                     fontScale = 2  # 字体缩放比例
                     color = (0, 0, 255)  # 字体颜色
-                    pos = (700, 40)  # 位置
+                    pos = (msg[i][0], msg[i][1])  # 位置
                     cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)        
                         
-                if int(self.arg) < len(msg):
-                    text = 'warning break-in!'.format(len(msg))  ##编辑文本
-                else:
-                    text = 'leaving!'.format(len(msg))
-                fontScale = 2  # 字体缩放比例
-                color = (255, 0, 0)  # 字体颜色
-                pos = (700, 100)  # 位置
-                cv2.putText(show, text, pos, cv2.FONT_HERSHEY_SIMPLEX, fontScale, color, 3)
 
         # cpu_thread.join()
         # gpu_thread.join()   
@@ -376,9 +372,6 @@ class Ui_MainWindow(QtWidgets.QWidget):
             if self.timer_camera.isActive():
                 self.timer_camera.stop()
             event.accept()
-
-
-
 
 
 if __name__ == "__main__":
