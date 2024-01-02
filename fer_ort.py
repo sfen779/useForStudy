@@ -15,8 +15,8 @@ from PIL import Image
 import threading
 import onnxruntime as ort
 import fastdeploy as fd
-emo_dict_cn = {0: '无表情', 1: '开心', 2: '悲伤', 3: '惊讶', 4: '恐惧', 5: '厌恶', 6: '愤怒'}
-emo_dict = {0: 'neutral', 1: 'happy', 2: 'sad', 3: 'surprise', 4: 'fear', 5: 'disgust', 6: 'angry'}
+emo_dict_cn = {0: '恐惧', 1: '开心', 2: '悲伤', 3: '惊讶', 4: '中性', 5: '厌恶', 6: '愤怒'}
+emo_dict = {0: 'fear', 1: 'happy', 2: 'sad', 3: 'surprise', 4: 'neutral', 5: 'disgust', 6: 'angry'}
 
 def normalize(nparray, order=2, axis=-1):
     """Normalize a N-D numpy array along the specified axis."""
@@ -135,7 +135,7 @@ class Ui_MainWindow(QtWidgets.QWidget):
         font = QtGui.QFont()
         font.setFamily("kaiti")
         font.setPointSize(18)
-        self.textBrowser = QtWidgets.QLabel("人体检测app")
+        self.textBrowser = QtWidgets.QLabel("表情检测app")
         self.textBrowser.setAlignment(Qt.AlignCenter)
         self.textBrowser.setFont(font)
 
